@@ -5,21 +5,23 @@ const Schema = mongoose.Schema;
 // Define collection and schema for User
 let UserModel = new Schema(
   {
-    user_name: {
+    username: {
       type: String,
       required: [true, "Name is required"],
+      unique: [true, "User already exists"],
     },
-    user_email: {
+    email: {
       type: String,
       required: [true, "Email is required"],
+      lowercase: true,
     },
-    user_role: {
+    role: {
       type: String,
       enum: ["student", "facilitator", "admin"],
       default: "student",
       required: [true, "User Role is required"],
     },
-    user_password: {
+    password: {
       type: String,
       required: [true, "Password is required"],
     },
@@ -35,35 +37,33 @@ UserModel.pre("save", function (next) {
   let user = this;
 
   // if the data is not modified
-  if (!user.isModified("user_password")) {
+  if (!user.isModified("password")) {
     return next();
   }
 
-  bcrypt.hash(user.user_password, 10, (err, hash) => {
+  bcrypt.hash(user.password, 10, (err, hash) => {
     if (err) {
       return next(err);
     }
-    user.user_password = hash;
+    user.password = hash;
     next();
   });
 });
 
 // Method to compare the password for login
-// UserModel.methods.login = (user_password) => {
-//   let user = this;
-
-//   return new Promise((resolve, reject) => {
-//     bcrypt.compare(user_password, user.user_password, (err, result) => {
-//       if (err) {
-//         reject(err);
-//       }
-//       if (result) {
-//         resolve();
-//       } else {
-//         reject();
-//       }
-//     });
-//   });
-// };
+UserModel.methods.comparePassword = function (password) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, this.password, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      if (result) {
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  });
+};
 
 module.exports = mongoose.model("UserModel", UserModel);

@@ -3,9 +3,11 @@ const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { courseRoutes, userRoutes } = require("./routes/authRoutes");
+const cors = require("cors");
 require("dotenv").config();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use("/courses", courseRoutes);
 app.use("/users", userRoutes);

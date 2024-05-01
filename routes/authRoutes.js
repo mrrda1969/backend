@@ -143,35 +143,35 @@ userRoutes.route("/delete/:id").get(function (req, res) {
 });
 
 // login route by username and password
-userRoutes.route("/login").post(async (req, res) => {
+userRoutes.route("/login").post(async function (req, res) {
   try {
-    const { user_name, user_password } = req.body;
-    const user = UserModel.findOne({ user_name });
-    if (!user) {
-      return res.status(400).json({ msg: "User does not exist" });
-    }
-
-    UserModel.methods.login = function (user_password) {
-      return new Promise((resolve, reject) => {
-        bcrypt.compare(user_password, user.user_password, (err, result) => {
-          if (err) {
-            reject(err);
+    UserModel.findOne({
+      user_name: req.body.user_name,
+    }).then((user) => {
+      if (user) {
+        bcrypt.compare(
+          req.body.user_password,
+          user.user_password,
+          function (err, result) {
+            if (result) {
+              res.status(200).json({
+                user_name: user.user_name,
+                user_role: user.user_role,
+              });
+            } else {
+              res.status(401).send("Invalid password");
+            }
+            if (err) {
+              throw err;
+            }
           }
-          if (result) {
-            resolve();
-          } else {
-            reject();
-          }
-        });
-      });
-    };
-
-    const isMatch = user.login(user_password);
-    if (!isMatch) {
-      return res.status(400).json({ msg: "Incorrect password" });
-    }
+        );
+      } else {
+        res.status(404).send("User not found");
+      }
+    });
   } catch (error) {
-    res.status(500).json({ msg: error.message });
+    res.status(402).send({ msg: error });
   }
 });
 
