@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 let Admin = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
     firstname: {
       type: String,
       required: [true, "First Name is required"],

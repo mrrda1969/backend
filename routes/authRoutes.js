@@ -75,19 +75,6 @@ courseRoutes.route("/delete/:id").get(function (req, res) {
     });
 });
 
-// Defined user saving route
-userRoutes.route("/add").post(function (req, res) {
-  let user = new UserModel(req.body);
-  user
-    .save()
-    .then((user) => {
-      res.status(200).json({ user: "user added successfully" });
-    })
-    .catch((err) => {
-      res.status(400).send("unable to save to database");
-    });
-});
-
 // Defined get data(index or listing) route
 userRoutes.route("/").get(function (req, res) {
   UserModel.find({})
@@ -140,39 +127,6 @@ userRoutes.route("/delete/:id").get(function (req, res) {
     .catch((err) => {
       res.status(400).send("Unable to delete user");
     });
-});
-
-// login route by username and password
-userRoutes.route("/login").post(async function (req, res) {
-  try {
-    UserModel.findOne({
-      user_name: req.body.user_name,
-    }).then((user) => {
-      if (user) {
-        bcrypt.compare(
-          req.body.user_password,
-          user.user_password,
-          function (err, result) {
-            if (result) {
-              res.status(200).json({
-                user_name: user.user_name,
-                user_role: user.user_role,
-              });
-            } else {
-              res.status(401).send("Invalid password");
-            }
-            if (err) {
-              throw err;
-            }
-          }
-        );
-      } else {
-        res.status(404).send("User not found");
-      }
-    });
-  } catch (error) {
-    res.status(402).send({ msg: error });
-  }
 });
 
 module.exports = { courseRoutes, userRoutes };

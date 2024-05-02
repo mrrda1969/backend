@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
-let Student = new mongoose.Schema(
+let Facilitator = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
     firstname: {
       type: String,
       required: [true, "First Name is required"],
@@ -14,16 +18,18 @@ let Student = new mongoose.Schema(
       type: Date,
       required: [true, "Date of Birth is required"],
     },
-    studentId: {
+    staffId: {
       type: String,
       required: true,
     },
-    program: {
+    department: {
       type: String,
       required: true,
     },
   },
-  { collation: { locale: "en" } }
+  {
+    collation: { locale: "en" },
+  }
 );
 
-module.exports = mongoose.model("StudentInfo", Student);
+module.exports = mongoose.model("FacilitatorInfo", Facilitator);
