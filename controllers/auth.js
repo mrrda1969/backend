@@ -94,12 +94,28 @@ authRoutes.route("/login").post(async (req, res) => {
     const token = jwt.sign({ _id: user._id }, authKeys.jwtSecretKey, {
       expiresIn: "24h",
     });
-    res.json(token);
+    res.json({
+      token: token,
+      role: user.role,
+    });
   } catch (error) {
     console.error(error);
 
     res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+authRoutes.route("/").get(function (req, res) {
+  UserModel.find({})
+    .then((users) => {
+      res.status(200).json(users);
+      if (users == null) {
+        res.status(200).json("Users not found ");
+      }
+    })
+    .catch((err) => {
+      res.status(400).send("Error");
+    });
 });
 
 module.exports = authRoutes;
