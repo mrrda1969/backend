@@ -15,7 +15,7 @@ let Admin = new mongoose.Schema(
       required: [true, "Last Name is required"],
     },
     dateOfBirth: {
-      type: Date,
+      type: String,
       required: [true, "Date of Birth is required"],
     },
     staffId: {
