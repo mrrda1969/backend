@@ -4,10 +4,14 @@ const Schema = mongoose.Schema;
 // Define collection and schema for Course
 let CourseModel = new Schema(
   {
-    course_name: {
+    name: {
       type: String,
     },
-    course_description: {
+    courseCode: {
+      type: String,
+      unique: [true, "Code already exists"],
+    },
+    description: {
       type: String,
     },
   },

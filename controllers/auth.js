@@ -11,7 +11,7 @@ const authRoutes = express.Router();
 
 // Adding a new user
 
-authRoutes.route("/adduser").post((req, res) => {
+authRoutes.route("/new").post((req, res) => {
   const data = req.body;
   let user = new UserModel({
     username: data.username,
@@ -55,6 +55,7 @@ authRoutes.route("/adduser").post((req, res) => {
           const token = jwt.sign({ _id: user._id }, authKeys.jwtSecretKey);
           res.json({
             token: token,
+            username: user.username,
             role: user.role,
           });
         })
@@ -96,6 +97,7 @@ authRoutes.route("/login").post(async (req, res) => {
     });
     res.json({
       token: token,
+      username: user.username,
       role: user.role,
     });
   } catch (error) {
@@ -110,11 +112,12 @@ authRoutes.route("/").get(function (req, res) {
     .then((users) => {
       res.status(200).json(users);
       if (users == null) {
+        ``;
         res.status(200).json("Users not found ");
       }
     })
     .catch((err) => {
-      res.status(400).send("Error");
+      res.status(400).send("Error", err);
     });
 });
 

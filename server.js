@@ -4,12 +4,13 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoutes = require("./controllers/auth");
+const courseRoutes = require("./controllers/api");
 require("dotenv").config();
 
 app.use(bodyParser.json());
 app.use(cors());
 
-// app.use("/courses", courseRoutes);
+app.use("/courses", courseRoutes);
 app.use("/users", authRoutes);
 
 // Connect to MongoDB
@@ -19,7 +20,7 @@ mongoose
     console.log("Database connected");
   })
   .catch((err) => {
-    console.log("Database connection error");
+    console.log("Database connection error:", err);
   });
 
 app.listen(process.env.PORT, () => {

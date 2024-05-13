@@ -26,6 +26,7 @@ let Facilitator = new mongoose.Schema(
       type: String,
       required: true,
     },
+    courses: {},
   },
   {
     collation: { locale: "en" },
