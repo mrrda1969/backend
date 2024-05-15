@@ -26,7 +26,15 @@ let Facilitator = new mongoose.Schema(
       type: String,
       required: true,
     },
-    courses: {},
+    courses: {
+      name: {
+        type: String,
+      },
+      courseCode: {
+        type: String,
+        unique: [true, "Course code already exists"],
+      },
+    },
   },
   {
     collation: { locale: "en" },
