@@ -11,6 +11,9 @@ let CourseModel = new Schema(
       type: String,
       unique: [true, "Code already exists"],
     },
+    image: {
+      type: String,
+    },
     description: {
       type: String,
     },

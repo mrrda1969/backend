@@ -21,7 +21,8 @@ authRoutes.route("/new").post((req, res) => {
   });
   user
     .save()
-    .then(() => {
+    .then((savedUser) => {
+      const username = savedUser.username;
       const userDetails =
         user.role == "student"
           ? new Student({
@@ -31,6 +32,7 @@ authRoutes.route("/new").post((req, res) => {
               dateOfBirth: data.dateOfBirth,
               studentId: data.studentId,
               program: data.program,
+              username: username,
             })
           : user.role == "facilitator"
           ? new Facilitator({
@@ -40,6 +42,7 @@ authRoutes.route("/new").post((req, res) => {
               dateOfBirth: data.dateOfBirth,
               staffId: data.staffId,
               department: data.department,
+              username: username,
             })
           : new Admin({
               userId: user._id,
@@ -47,6 +50,7 @@ authRoutes.route("/new").post((req, res) => {
               lastname: data.lastname,
               dateOfBirth: data.dateOfBirth,
               staffId: data.staffId,
+              username: username,
             });
 
       userDetails
@@ -95,11 +99,21 @@ authRoutes.route("/login").post(async (req, res) => {
     const token = jwt.sign({ _id: user._id }, authKeys.jwtSecretKey, {
       expiresIn: "24h",
     });
-    res.json({
-      token: token,
-      username: user.username,
-      role: user.role,
-    });
+    if (user.role == "facilitator" || user.role == "admin") {
+      res.json({
+        token: token,
+        username: user.username,
+        role: user.role,
+        staffId: user.staffId,
+      });
+    } else {
+      res.json({
+        token: token,
+        username: user.username,
+        role: user.role,
+        studentId: user.studentId,
+      });
+    }
   } catch (error) {
     console.error(error);
 

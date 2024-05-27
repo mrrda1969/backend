@@ -9,6 +9,9 @@ require("dotenv").config();
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 
 app.use("/courses", courseRoutes);
 app.use("/users", authRoutes);

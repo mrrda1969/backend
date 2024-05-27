@@ -22,6 +22,10 @@ let Student = new mongoose.Schema(
       type: String,
       required: true,
     },
+    username: {
+      type: String,
+      ref: "UserModel",
+    },
     program: {
       type: String,
       required: true,

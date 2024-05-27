@@ -22,19 +22,21 @@ let Facilitator = new mongoose.Schema(
       type: String,
       required: true,
     },
+    username: {
+      type: String,
+      ref: "UserModel",
+    },
     department: {
       type: String,
       required: true,
     },
-    courses: {
-      name: {
-        type: String,
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        unique: true,
+        ref: "CourseModel",
       },
-      courseCode: {
-        type: String,
-        unique: [true, "Course code already exists"],
-      },
-    },
+    ],
   },
   {
     collation: { locale: "en" },

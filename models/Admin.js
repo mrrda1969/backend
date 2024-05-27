@@ -18,6 +18,10 @@ let Admin = new mongoose.Schema(
       type: String,
       required: [true, "Date of Birth is required"],
     },
+    username: {
+      type: String,
+      ref: "UserModel",
+    },
     staffId: {
       type: String,
       required: true,

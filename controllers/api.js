@@ -1,23 +1,45 @@
 const express = require("express");
+const multer = require("multer");
 const CourseModel = require("../models/CourseModel");
 const Facilitator = require("../models/Facilitator");
 
 const courseRoutes = express.Router();
 
-// Adding a new course
-
-courseRoutes.route("/new").post((req, res) => {
-  let course = new CourseModel(req.body);
-
-  course
-    .save()
-    .then(() => {
-      res.status(201).json({ message: "Course Added Successfully" });
-    })
-    .catch((err) => {
-      res.status(402).json({ message: "Failed with error: ", err });
-    });
+// multer storage function
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./storage");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
 });
+
+const upload = multer({ storage: storage });
+
+// api to create a course
+
+courseRoutes.post("/new", upload.single("image"), (req, res) => {
+  const { name, courseCode, description } = req.body;
+  const newCourse = new CourseModel({
+    name,
+    courseCode,
+    description,
+    image: req.file ? req.file.originalname : null, // Handle case where file might not be uploaded
+  });
+
+  newCourse
+    .save()
+    .then((course) => res.json(course))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+// retrieve an image for a course
+
+// courseRoutes.get("/image/:filePath", (req, res) => {
+//   const filePath = req.params.filePath;
+//   res.sendFile(`${__dirname}/${filePath}`);
+// });
 
 // Delete a course
 
@@ -43,7 +65,11 @@ courseRoutes.route("/delete/:code").get((req, res) => {
 courseRoutes.route("/").get((req, res) => {
   CourseModel.find({})
     .then((courses) => {
-      res.json(courses);
+      if (courses) {
+        res.json(courses);
+      } else {
+        res.json("No course found");
+      }
     })
     .catch((err) => {
       res.status(400).json({ message: "Failed with error: ", err });
@@ -95,20 +121,15 @@ courseRoutes.route("/assign/facilitator").post(async (req, res) => {
   const { courseCode, staffId } = req.body;
 
   try {
-    await CourseModel.findOne({ courseCode: courseCode }).then(
+    await CourseModel.find({ courseCode: { $in: courseCode } }).then(
       async (course) => {
         if (course) {
-          let name = course.name;
-          let courseCode = course.courseCode;
           await Facilitator.findOne({ staffId: staffId })
             .then(async (facilitator) => {
-              if (
-                facilitator.courses.name != name &&
-                facilitator.courses.courseCode != courseCode
-              ) {
+              if (facilitator) {
                 await Facilitator.updateOne(
                   { staffId: staffId },
-                  { $push: { courses: course } }
+                  { $addToSet: { courses: course } }
                 )
                   .then(() => {
                     res
@@ -122,11 +143,6 @@ courseRoutes.route("/assign/facilitator").post(async (req, res) => {
                   });
               } else if (!facilitator) {
                 res.status(401).json({ message: "Facilitator not found" });
-              } else if (
-                facilitator.courses.name == name ||
-                facilitator.courses.courseCode == courseCode
-              ) {
-                res.status(403).json({ message: "Course already assigned" });
               } else {
                 res.status(404).json({ message: "Error" });
               }
@@ -144,6 +160,27 @@ courseRoutes.route("/assign/facilitator").post(async (req, res) => {
   }
 });
 
-// Remove an assigned course
+// Retrieve assigned courses
+
+courseRoutes.route("/:username/mycourses").get((req, res) => {
+  try {
+    const username = req.params.username;
+    Facilitator.findOne({ username: username }, { courses: 1 })
+      .populate("courses")
+      .then((result) => {
+        if (result) {
+          res.json(result);
+        } else {
+          res.status(404).json("404 Not found");
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({ message: "Error", err });
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 module.exports = courseRoutes;
