@@ -3,9 +3,14 @@ const multer = require("multer");
 const CourseModel = require("../models/CourseModel");
 const Facilitator = require("../models/Facilitator");
 
+/**
+ * Routes for course operations
+ */
+
 const courseRoutes = express.Router();
 
-// multer storage function
+/******** Multer upload function *******/
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./storage");
@@ -17,7 +22,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// api to create a course
+/******** API for creating a new course *******/
 
 courseRoutes.post("/new", upload.single("image"), (req, res) => {
   const { name, courseCode, description } = req.body;
@@ -25,23 +30,25 @@ courseRoutes.post("/new", upload.single("image"), (req, res) => {
     name,
     courseCode,
     description,
-    image: req.file ? req.file.originalname : null, // Handle case where file might not be uploaded
+    image: req.file ? req.file.originalname : null,
   });
 
   newCourse
     .save()
-    .then((course) => res.json(course))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .then((course) =>
+      res
+        .status(201)
+        .json({ message: `Course ${course.courseCode} created successfully` })
+    )
+    .catch((err) => {
+      res
+        .status(400)
+        .json({ message: "An error occured while processing your request" });
+      console.log(err);
+    });
 });
 
-// retrieve an image for a course
-
-// courseRoutes.get("/image/:filePath", (req, res) => {
-//   const filePath = req.params.filePath;
-//   res.sendFile(`${__dirname}/${filePath}`);
-// });
-
-// Delete a course
+/******** API for deleting a course *******/
 
 courseRoutes.route("/delete/:code").get((req, res) => {
   let code = req.params.courseCode;
@@ -50,25 +57,9 @@ courseRoutes.route("/delete/:code").get((req, res) => {
     .findOneAndDelete(code)
     .then((result) => {
       if (result) {
-        res.status(201).json({ message: "Course removed succuessfully" });
+        res.status(200).json({ message: "Course removed succuessfully" });
       } else {
-        res.status(400).json({ message: "Course Unavailable" });
-      }
-    })
-    .catch((err) => {
-      res.status(402).json({ message: "Failed with error: ", err });
-    });
-});
-
-// Get all courses
-
-courseRoutes.route("/").get((req, res) => {
-  CourseModel.find({})
-    .then((courses) => {
-      if (courses) {
-        res.json(courses);
-      } else {
-        res.json("No course found");
+        res.status(404).json({ message: "Course not found" });
       }
     })
     .catch((err) => {
@@ -76,7 +67,23 @@ courseRoutes.route("/").get((req, res) => {
     });
 });
 
-// Update course details
+/********** Get the list of all courses available     ********/
+
+courseRoutes.route("/").get((req, res) => {
+  CourseModel.find({})
+    .then((courses) => {
+      if (courses) {
+        res.json(courses);
+      } else {
+        res.status(404).json({ message: "No courses found" });
+      }
+    })
+    .catch((err) => {
+      res.status(400).json({ message: "Failed with error: ", err });
+    });
+});
+
+/******** Update the details of a course *********/
 
 courseRoutes.route("/update/:code").post((req, res) => {
   let code = req.params.courseCode;
@@ -92,11 +99,11 @@ courseRoutes.route("/update/:code").post((req, res) => {
       }
     })
     .catch((err) => {
-      res.status(402).json({ message: "Failed with error: ", err });
+      res.status(400).json({ message: "Failed with error: ", err });
     });
 });
 
-// Get a course by code
+/******** Find a single course using the course code *******/
 
 courseRoutes.route("/:code").get((req, res) => {
   let code = req.params.courseCode;
@@ -105,17 +112,17 @@ courseRoutes.route("/:code").get((req, res) => {
     .findOne({ code: code })
     .then((result) => {
       if (result) {
-        res.status(201).json(result);
+        res.status(200).json(result);
       } else {
-        res.status(400).json({ message: "Course Unavailable" });
+        res.status(404).json({ message: "Course Unavailable" });
       }
     })
     .catch((err) => {
-      res.status(402).json({ message: "Failed with error: ", err });
+      res.status(400).json({ message: "Failed with error: ", err });
     });
 });
 
-// Assign a course to a facilitator
+/******** Assign a course to a facilitator *******/
 
 courseRoutes.route("/assign/facilitator").post(async (req, res) => {
   const { courseCode, staffId } = req.body;
@@ -138,29 +145,29 @@ courseRoutes.route("/assign/facilitator").post(async (req, res) => {
                   })
                   .catch(() => {
                     res
-                      .status(401)
+                      .status(400)
                       .json({ message: "Failed to assign course" });
                   });
               } else if (!facilitator) {
-                res.status(401).json({ message: "Facilitator not found" });
+                res.status(404).json({ message: "Facilitator not found" });
               } else {
-                res.status(404).json({ message: "Error" });
+                res.status(400).json({ message: "Error" });
               }
             })
             .catch((err) => {
-              res.status(402).json({ message: "Failed with error: ", err });
+              res.status(400).json({ message: "Failed with error: ", err });
             });
         } else {
-          res.status(401).json({ message: "Course not found" });
+          res.status(404).json({ message: "Course not found" });
         }
       }
     );
   } catch (err) {
-    res.status(402).json({ message: "Failed with error: ", err });
+    res.status(400).json({ message: "Failed with error: ", err });
   }
 });
 
-// Retrieve assigned courses
+/******** Retrieve assigned courses for a facilitator *******/
 
 courseRoutes.route("/:username/mycourses").get((req, res) => {
   try {
@@ -182,5 +189,9 @@ courseRoutes.route("/:username/mycourses").get((req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+/**
+ * Routes for student operations
+ */
 
 module.exports = courseRoutes;
