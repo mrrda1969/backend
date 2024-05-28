@@ -30,6 +30,13 @@ let Student = new mongoose.Schema(
       type: String,
       required: true,
     },
+    level: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+    },
   },
   { collation: { locale: "en" } }
 );
