@@ -26,6 +26,14 @@ let Student = new mongoose.Schema(
       type: String,
       ref: "UserModel",
     },
+    faculty: {
+      type: String,
+      required: true,
+    },
+    department: {
+      type: String,
+      required: true,
+    },
     program: {
       type: String,
       required: true,

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChatHistory">
+    <accountData>
+      <list>
+        <AccountData>
+          <accountId value="VXNlcjo0MDkyOTk=" />
+          <chats>
+            <list>
+              <chat>
+                <internalId value="7fdaa68d-da5d-455b-97a3-758e12ecee2f" />
+              </chat>
+              <chat>
+                <internalId value="f57f46a2-2306-4429-819f-a2278af03bb2" />
+              </chat>
+              <chat>
+                <internalId value="c54308a7-e826-4bc1-93c8-6a708904aa15" />
+                <messages>
+                  <list>
+                    <message>
+                      <speaker value="HUMAN" />
+                      <text value="image uplad for mern stack" />
+                    </message>
+                    <message>
+                      <speaker value="ASSISTANT" />
+                    </message>
+                  </list>
+                </messages>
+                <updatedAt value="2024-05-22T00:00:40.33876" />
+              </chat>
+              <chat>
+                <internalId value="69b37658-6c21-4fad-add7-88179cadbdbc" />
+              </chat>
+            </list>
+          </chats>
+        </AccountData>
+      </list>
+    </accountData>
+  </component>
+</project>

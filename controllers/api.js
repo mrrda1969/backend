@@ -224,8 +224,8 @@ studentRoutes.route("/shortlist").post((req, res) => {
 
 /*************** Find shortlisted student by studentId *************/
 
-studentRoutes.route("/shortlisted/").get((req, res) => {
-  const studentId = req.body.studentId;
+studentRoutes.route("/shortlisted/:studentId").get((req, res) => {
+  const studentId = req.params.studentId;
   ListedStudent.findOne({ studentId: studentId })
     .then((result) => {
       if (!result) {

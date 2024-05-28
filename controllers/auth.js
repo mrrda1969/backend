@@ -9,7 +9,7 @@ const authKeys = require("../lib/authKeys");
 
 const authRoutes = express.Router();
 
-// Adding a new user
+/********** Signing up a new user ********/
 
 authRoutes.route("/new").post((req, res) => {
   const data = req.body;
@@ -80,7 +80,7 @@ authRoutes.route("/new").post((req, res) => {
     });
 });
 
-// login api
+/********** Login API ********/
 
 authRoutes.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
@@ -88,7 +88,7 @@ authRoutes.route("/login").post(async (req, res) => {
   try {
     const user = await UserModel.findOne({ username });
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
@@ -121,13 +121,14 @@ authRoutes.route("/login").post(async (req, res) => {
   }
 });
 
+/********** Retrieve all users ********/
+
 authRoutes.route("/").get(function (req, res) {
   UserModel.find({})
     .then((users) => {
       res.status(200).json(users);
       if (users == null) {
-        ``;
-        res.status(200).json("Users not found ");
+        res.status(404).json({ message: "No user found" });
       }
     })
     .catch((err) => {
