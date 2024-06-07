@@ -17,6 +17,12 @@ let CourseModel = new Schema(
     description: {
       type: String,
     },
+    programs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Program",
+      },
+    ],
   },
   {
     collection: "course",

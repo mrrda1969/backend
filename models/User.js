@@ -10,6 +10,14 @@ let UserModel = new Schema(
       required: [true, "Name is required"],
       unique: [true, "User already exists"],
     },
+    firstname: {
+      type: String,
+      required: true,
+    },
+    lastname: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: [true, "Email is required"],

@@ -2,41 +2,18 @@ const mongoose = require("mongoose");
 
 let Facilitator = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
-    firstname: {
-      type: String,
-      required: [true, "First Name is required"],
-    },
-    lastname: {
-      type: String,
-      required: [true, "Last Name is required"],
-    },
-    dateOfBirth: {
-      type: String,
-      required: [true, "Date of Birth is required"],
-    },
     staffId: {
       type: String,
       required: true,
     },
-    username: {
-      type: String,
-      ref: "UserModel",
-    },
     department: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
     },
-    courses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        unique: true,
-        ref: "CourseModel",
-      },
-    ],
+    faculty: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Faculty",
+    },
   },
   {
     collation: { locale: "en" },
