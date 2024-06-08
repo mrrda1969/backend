@@ -6,10 +6,12 @@ let CourseModel = new Schema(
   {
     name: {
       type: String,
+      required: true,
     },
     courseCode: {
       type: String,
       unique: [true, "Code already exists"],
+      required: true,
     },
     image: {
       type: String,
@@ -23,6 +25,10 @@ let CourseModel = new Schema(
         ref: "Program",
       },
     ],
+    department: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+    },
   },
   {
     collection: "course",

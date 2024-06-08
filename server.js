@@ -1,20 +1,13 @@
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
+const router = require("./routes/routes");
 const mongoose = require("mongoose");
-const cors = require("cors");
-const authRoutes = require("./controllers/auth");
-const courseRoutes = require("./controllers/api");
+const middleware = require("./middleware/middleware");
+
 require("dotenv").config();
 
-app.use(bodyParser.json());
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.urlencoded({ extended: true }));
-
-app.use("/courses", courseRoutes);
-app.use("/users", authRoutes);
+app.use(middleware);
+app.use(router);
 
 // Connect to MongoDB
 mongoose

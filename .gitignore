@@ -1,5 +1,6 @@
 # npm
 node_modules
+uploads
 package-lock.json
 *.log
 *.gz
