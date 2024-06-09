@@ -8,11 +8,11 @@ const Program = require("../models/Program");
 const programRoutes = express.Router();
 
 programRoutes.route("/new").post((req, res) => {
-  let faculty = new Program({
+  let program = new Program({
     name: req.body.name,
     description: req.body.description,
   });
-  faculty
+  program
     .save()
     .then((result) => {
       res.status(201).json(result);
