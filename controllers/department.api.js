@@ -12,7 +12,9 @@ departmentRoutes.route("/new").post((req, res) => {
   department
     .save()
     .then((result) => {
-      res.status(201).json(result);
+      res
+        .status(201)
+        .json({ message: `${result.name} department created successfully` });
     })
     .catch((err) => {
       console.error(err);

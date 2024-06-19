@@ -19,6 +19,8 @@ mongoose
     console.log("Database connection error:", err);
   });
 
+middleware.createDefaultAdmin();
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port: ${process.env.PORT}`);
 });

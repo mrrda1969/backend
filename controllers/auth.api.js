@@ -92,8 +92,19 @@ authRoutes.route("/login").post(async (req, res) => {
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).json({ message: "Invalid Password" });
+    }
 
-    console.log(validPassword);
+    const token = jwt.sign({ _id: user._id }, authKeys.jwtSecretKey, {
+      expiresIn: "24h",
+    });
+
+    res.json({
+      token: token,
+      username: user.username,
+      role: user.role,
+    });
   } catch (error) {
     console.error(error);
 

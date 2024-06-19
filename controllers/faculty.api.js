@@ -15,7 +15,19 @@ facultyRoutes.route("/new").post((req, res) => {
   faculty
     .save()
     .then((result) => {
-      res.status(201).json(result);
+      res.status(201).json({
+        message: `Faculty of ${result.name} created successfully`,
+      });
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
+facultyRoutes.route("/").get(async (req, res) => {
+  Faculty.find({})
+    .then((result) => {
+      res.status(200).json(result);
     })
     .catch((err) => {
       console.error(err);

@@ -48,3 +48,5 @@ studentRoutes.route("/shortlisted/").get((req, res) => {
       res.json({ message: "Error" });
     });
 });
+
+module.exports = studentRoutes;
